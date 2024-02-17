@@ -1,0 +1,33 @@
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      # Only will build development stage from our dockerfile
+      target: development
+
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env
+    # Run a command against the development stage of the image
+    command: npm run dev
+    environment:
+      - DATABASE_URL=postgresql://root:root@postgres:5432/nome-banco-projeto?schema=public
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - todonext14:/var/lib/postgresql/data
+volumes:
+  todonext14:
